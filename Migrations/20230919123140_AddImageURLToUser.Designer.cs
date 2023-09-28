@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_Marketplace_.net_7_v1.Migrations
 {
     [DbContext(typeof(MarketplaceDbContext))]
-    [Migration("20230911200445_AddImageToProductAndReview")]
-    partial class AddImageToProductAndReview
+    [Migration("20230919123140_AddImageURLToUser")]
+    partial class AddImageURLToUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -225,6 +225,9 @@ namespace API_Marketplace_.net_7_v1.Migrations
                     b.Property<string>("FirstName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(50)

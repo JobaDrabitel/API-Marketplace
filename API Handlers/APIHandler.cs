@@ -1,5 +1,10 @@
 ﻿using API_Marketplace_.net_7_v1.Models;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using System.Collections;
+using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text.Json;
 
 namespace API_Marketplace_.net_7_v1.API_Handlers
@@ -8,54 +13,57 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
     {
         public static async Task CreateEntityAsync<T>(HttpContext context, MarketplaceDbContext dbContext) where T : class
         {
-            // Читаем JSON-тело запроса
             using var reader = new StreamReader(context.Request.Body);
             var jsonBody = await reader.ReadToEndAsync();
 
             try
             {
-                // Десериализуем JSON в объект типа T
                 var newEntity = JsonSerializer.Deserialize<T>(jsonBody);
 
-                // Добавляем объект в DbSet<T> и сохраняем изменения в базе данных
                 dbContext.Set<T>().Add(newEntity);
+
                 await dbContext.SaveChangesAsync();
 
-                context.Response.StatusCode = 201; // Created
-                await context.Response.WriteAsync($"{typeof(T).Name} created successfully.");
+                var entityType = typeof(T);
+                var firstProperty = entityType.GetProperties().FirstOrDefault();
+                if (firstProperty != null)
+                {
+                    var entityId = firstProperty.GetValue(newEntity);
+
+                    context.Response.StatusCode = 201;
+                    await context.Response.WriteAsync(entityId.ToString()); ;
+                }
             }
             catch (JsonException)
             {
-                context.Response.StatusCode = 400; // Bad Request
+                context.Response.StatusCode = 400;
                 await context.Response.WriteAsync("Invalid JSON data.");
             }
         }
-        
+
 
         public static async Task GetEntityAsync<T>(HttpContext context, MarketplaceDbContext dbContext) where T : class
         {
             if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int entityId))
             {
-                // Найдите объект типа T в базе данных по entityId
                 var entity = await dbContext.Set<T>().FindAsync(entityId);
 
                 if (entity != null)
                 {
-                    // Сериализуйте объект типа T в JSON и верните его клиенту
                     var entityJson = JsonSerializer.Serialize(entity);
-                    context.Response.StatusCode = 200; // OK
+                    context.Response.StatusCode = 200;
                     context.Response.ContentType = "application/json";
                     await context.Response.WriteAsync(entityJson);
                 }
                 else
                 {
-                    context.Response.StatusCode = 404; // Not Found
+                    context.Response.StatusCode = 404;
                     await context.Response.WriteAsync($"{typeof(T).Name} not found.");
                 }
             }
             else
             {
-                context.Response.StatusCode = 400; // Bad Request
+                context.Response.StatusCode = 400;
                 await context.Response.WriteAsync($"Invalid {typeof(T).Name} ID format.");
             }
         }
@@ -68,133 +76,117 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
 
         public static async Task UpdateEntityAsync<T>(HttpContext context, MarketplaceDbContext dbContext) where T : class
         {
-            // Получите EntityId из URL
             if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int entityId))
             {
-                // Читаем JSON-тело запроса
                 using var reader = new StreamReader(context.Request.Body);
                 var jsonBody = await reader.ReadToEndAsync();
 
                 try
                 {
-                    // Десериализуем JSON в объект типа T и обновляем данные объекта
                     var entityToUpdate = await dbContext.Set<T>().FindAsync(entityId);
                     if (entityToUpdate != null)
                     {
                         var updatedEntity = JsonSerializer.Deserialize<T>(jsonBody);
 
-                        for (int i = 1; i > typeof(T).GetProperties().Count()-1; i++)
-                        {
-                                var newValue = typeof(T).GetProperties()[i].GetValue(updatedEntity);
-                                if (newValue != null)
-                                {
-                                    typeof(T).GetProperties()[i].SetValue(entityToUpdate, newValue);
-                                }
-                            
-                        }
-                        // Сохраняем изменения в базе данных
-                        await dbContext.SaveChangesAsync();
-                        context.Response.StatusCode = 200; // OK
+						for (int i = 1; i > typeof(T).GetProperties().Count() - 1; i++)
+						{
+							var newValue = typeof(T).GetProperties()[i].GetValue(updatedEntity);
+							if (newValue != null)
+							{
+								typeof(T).GetProperties()[i].SetValue(entityToUpdate, newValue);
+							}
+
+						}
+
+						await dbContext.SaveChangesAsync();
+                        context.Response.StatusCode = 200;
+
                         await context.Response.WriteAsync($"{typeof(T).Name} updated successfully.");
                     }
                     else
                     {
-                        context.Response.StatusCode = 404; // Not Found
+                        context.Response.StatusCode = 404;
                         await context.Response.WriteAsync($"{typeof(T).Name} not found.");
                     }
                 }
                 catch (JsonException)
                 {
-                    // Ошибка в формате JSON-данных, возвращаем ошибку
-                    context.Response.StatusCode = 400; // Bad Request
+                    context.Response.StatusCode = 400;
                     await context.Response.WriteAsync("Invalid JSON data.");
                 }
             }
             else
             {
-                context.Response.StatusCode = 400; // Bad Request
+                context.Response.StatusCode = 400;
                 await context.Response.WriteAsync($"Invalid {typeof(T).Name} ID format.");
             }
         }
-
 
         public static async Task DeleteEntityByIDAsync<T>(HttpContext context, MarketplaceDbContext dbContext) where T : class
         {
             if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int entityId))
             {
-                // Найдите объект типа T в базе данных по entityId
                 var entityToDelete = await dbContext.Set<T>().FindAsync(entityId);
 
                 if (entityToDelete != null)
                 {
-                    // Удаляем объект из DbSet<T> и сохраняем изменения
                     dbContext.Set<T>().Remove(entityToDelete);
                     await dbContext.SaveChangesAsync();
-                    context.Response.StatusCode = 200; // OK
+                    context.Response.StatusCode = 200;
                     await context.Response.WriteAsync($"{typeof(T).Name} deleted successfully.");
                 }
                 else
                 {
-                    context.Response.StatusCode = 404; // Not Found
+                    context.Response.StatusCode = 404;
                     await context.Response.WriteAsync($"{typeof(T).Name} not found.");
                 }
             }
             else
             {
-                context.Response.StatusCode = 400; // Bad Request
+                context.Response.StatusCode = 400;
                 await context.Response.WriteAsync($"Invalid {typeof(T).Name} ID format.");
             }
         }
+
         public static async Task SearchEntitiesByJsonAsync<T>(HttpContext context, MarketplaceDbContext dbContext) where T : class
         {
-            // Читаем JSON-тело запроса
             using var reader = new StreamReader(context.Request.Body);
             var jsonBody = await reader.ReadToEndAsync();
 
             try
             {
-                // Десериализуем JSON в объект
                 var searchRequest = JsonSerializer.Deserialize<T>(jsonBody);
+                var properties = typeof(T).GetProperties();
+                var query = dbContext.Set<T>().AsQueryable();
 
-                // Ищем сущности в базе данных, которые соответствуют заданным условиям
-                var matchingEntities = await dbContext.Set<T>()
-                    .Where(entity => EntityMatchesSearchRequest(entity, searchRequest))
-                    .ToListAsync();
+                for (int i = 1; i < properties.Length; i++)
+                {
+                    var property = properties[i];
 
-                // Сериализуем найденные сущности в JSON и возвращаем клиенту
+                    if (property.PropertyType != typeof(string) &&
+                        typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
+                    {
+                        continue;
+                    }
+
+                    var value = property.GetValue(searchRequest);
+                    if (value != null && !value.Equals(0))
+                    {
+                        query = query.Where($"{property.Name} = @0", value);
+                    }
+                }
+
+                var matchingEntities = await query.ToListAsync();
+
                 var responseJson = JsonSerializer.Serialize(matchingEntities);
-                context.Response.StatusCode = 200; // OK
+                context.Response.StatusCode = 200;
                 await context.Response.WriteAsync(responseJson);
             }
             catch (JsonException)
             {
-                // Ошибка в формате JSON-данных, возвращаем ошибку
-                context.Response.StatusCode = 400; // Bad Request
+                context.Response.StatusCode = 400;
                 await context.Response.WriteAsync("Invalid JSON data.");
             }
         }
-
-        // Метод для проверки соответствия сущности условиям из поискового запроса
-        private static bool EntityMatchesSearchRequest<T>(T entity, T searchRequest)
-        {
-            foreach (var property in typeof(T).GetProperties())
-            {
-                var entityValue = property.GetValue(entity);
-                var searchValue = property.GetValue(searchRequest);
-
-                if (entityValue == null && searchValue != null)
-                {
-                    return false; // Свойство в сущности должно быть null, если оно null в поисковом запросе
-                }
-
-                if (!entityValue?.Equals(searchValue) ?? false)
-                {
-                    return false; // Значения свойств не совпадают
-                }
-            }
-
-            return true; // Все свойства соответствуют
-        }
-
     }
 }
