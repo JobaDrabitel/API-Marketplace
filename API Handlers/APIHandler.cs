@@ -88,19 +88,17 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
                     {
                         var updatedEntity = JsonSerializer.Deserialize<T>(jsonBody);
 
-                        foreach (var propertyInfo in typeof(T).GetProperties())
-                        {
-                            if (!(propertyInfo.Name.Contains("ID") || propertyInfo.Name.Contains("Id")))
-                            {
-                                var newValue = propertyInfo.GetValue(updatedEntity);
-                                if (newValue != null)
-                                {
-                                    propertyInfo.SetValue(entityToUpdate, newValue);
-                                }
-                            }
-                        }
+						for (int i = 1; i > typeof(T).GetProperties().Count() - 1; i++)
+						{
+							var newValue = typeof(T).GetProperties()[i].GetValue(updatedEntity);
+							if (newValue != null)
+							{
+								typeof(T).GetProperties()[i].SetValue(entityToUpdate, newValue);
+							}
 
-                        await dbContext.SaveChangesAsync();
+						}
+
+						await dbContext.SaveChangesAsync();
                         context.Response.StatusCode = 200;
                         await context.Response.WriteAsync($"{typeof(T).Name} updated successfully.");
                     }
