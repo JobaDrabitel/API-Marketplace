@@ -60,6 +60,8 @@ app.MapPost("/api/product/updatebyid/{Id}", async (MarketplaceDbContext dbContex
 app.MapGet("/api/product/getall", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.GetAllEntitiesAsync<Product>(dbContext, context));
 
+app.MapPost("/api/product/getbyfields", async (MarketplaceDbContext dbContext, HttpContext context) =>
+    await APIHandler.SearchEntitiesByJsonAsync<Product>(context, dbContext));
 
 // Orders
 app.MapPut("/api/order/create", async (MarketplaceDbContext dbContext, HttpContext context) =>
@@ -111,18 +113,21 @@ app.MapPost("/api/review/updatebyid/{Id}", async (MarketplaceDbContext dbContext
 app.MapGet("/api/review/getall", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.GetAllEntitiesAsync<Review>(dbContext, context));
 
+app.MapPost("/api/review/getbyfields", async (MarketplaceDbContext dbContext, HttpContext context) =>
+    await APIHandler.SearchEntitiesByJsonAsync<Review>(context, dbContext));
+
 
 // Categories
 app.MapPut("/api/category/create", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.CreateEntityAsync<Category>(context, dbContext));
 
-app.MapDelete("/api/category/getbyid/{Id}", async (MarketplaceDbContext dbContext, HttpContext context) =>
+app.MapDelete("/api/category/deletebyid/{Id}", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.DeleteEntityByIDAsync<Category>(context, dbContext));
 
 app.MapPost("/api/category/updatebyid/{Id}", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.UpdateEntityAsync<Category>(context, dbContext));
 
-app.MapGet("/api/category/deletebyid/{Id}", async (MarketplaceDbContext dbContext, HttpContext context) =>
+app.MapGet("/api/category/getbyid/{Id}", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.GetEntityAsync<Category>(context, dbContext));
 
 app.MapGet("/api/category/getall", async (MarketplaceDbContext dbContext, HttpContext context) =>
@@ -145,6 +150,8 @@ app.MapGet("/api/wishlist/deletebyid/{Id}", async (MarketplaceDbContext dbContex
 app.MapGet("/api/wishlist/getall", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.GetAllEntitiesAsync<Wishlist>(dbContext, context));
 
+app.MapPost("/api/wishlist/getbyfields", async (MarketplaceDbContext dbContext, HttpContext context) =>
+    await APIHandler.SearchEntitiesByJsonAsync<Wishlist>(context, dbContext));
 
 // Roles
 app.MapPut("/api/role/create", async (MarketplaceDbContext dbContext, HttpContext context) =>

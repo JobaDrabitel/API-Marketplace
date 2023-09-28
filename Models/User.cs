@@ -13,7 +13,8 @@ public partial class User
 
     public string? Email { get; set; }
 
-    public string? PasswordHash { get; set; }
+	public string? ImageURL { get; set; }
+	public string? PasswordHash { get; set; }
 
     public int? RoleId { get; set; }
 
