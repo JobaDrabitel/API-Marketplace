@@ -100,6 +100,7 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
 
 						await dbContext.SaveChangesAsync();
                         context.Response.StatusCode = 200;
+
                         await context.Response.WriteAsync($"{typeof(T).Name} updated successfully.");
                     }
                     else
