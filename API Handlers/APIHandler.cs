@@ -15,12 +15,13 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
         {
             using var reader = new StreamReader(context.Request.Body);
             var jsonBody = await reader.ReadToEndAsync();
+			jsonBody = jsonBody.Trim('\"');
 
-            try
+			try
             {
                 var newEntity = JsonSerializer.Deserialize<T>(jsonBody);
 
-                dbContext.Set<T>().Add(newEntity);
+                await dbContext.Set<T>().AddAsync(newEntity);
 
                 await dbContext.SaveChangesAsync();
 
@@ -80,15 +81,15 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
             {
                 using var reader = new StreamReader(context.Request.Body);
                 var jsonBody = await reader.ReadToEndAsync();
-
-                try
+				jsonBody = jsonBody.Trim('\"');
+				try
                 {
                     var entityToUpdate = await dbContext.Set<T>().FindAsync(entityId);
                     if (entityToUpdate != null)
                     {
                         var updatedEntity = JsonSerializer.Deserialize<T>(jsonBody);
 
-						for (int i = 1; i > typeof(T).GetProperties().Count() - 1; i++)
+						for (int i = 1; i < typeof(T).GetProperties().Count() - 1; i++)
 						{
 							var newValue = typeof(T).GetProperties()[i].GetValue(updatedEntity);
 							if (newValue != null)
