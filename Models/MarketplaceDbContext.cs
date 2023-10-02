@@ -86,6 +86,7 @@ public partial class MarketplaceDbContext : DbContext
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.ImageUrl).HasColumnName("ImageURL");
             entity.Property(e => e.Name).HasMaxLength(255);
             entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.SellerUserId).HasColumnName("SellerUserID");
@@ -108,6 +109,7 @@ public partial class MarketplaceDbContext : DbContext
 
             entity.Property(e => e.ReviewId).HasColumnName("ReviewID");
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.ImageUrl).HasColumnName("ImageURL");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
@@ -136,11 +138,19 @@ public partial class MarketplaceDbContext : DbContext
 
             entity.HasIndex(e => e.Email, "UQ__Users__A9D105349A7BDD14").IsUnique();
 
+            entity.HasIndex(e => e.Email, "UniqueEmail").IsUnique();
+
+            entity.HasIndex(e => e.Phone, "UniquePhone").IsUnique();
+
             entity.Property(e => e.UserId).HasColumnName("UserID");
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.FirstName).HasMaxLength(50);
+            entity.Property(e => e.ImageUrl).HasColumnName("ImageURL");
             entity.Property(e => e.LastName).HasMaxLength(50);
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
+            entity.Property(e => e.Phone)
+                .HasMaxLength(11)
+                .IsFixedLength();
         });
 
         modelBuilder.Entity<Wishlist>(entity =>

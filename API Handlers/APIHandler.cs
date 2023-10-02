@@ -1,5 +1,6 @@
 ﻿using API_Marketplace_.net_7_v1.Models;
 using AutoMapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System.Collections;
@@ -20,7 +21,6 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
 			try
             {
                 var newEntity = JsonSerializer.Deserialize<T>(jsonBody);
-
                 await dbContext.Set<T>().AddAsync(newEntity);
 
                 await dbContext.SaveChangesAsync();
@@ -35,10 +35,16 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
                     await context.Response.WriteAsync(entityId.ToString()); ;
                 }
             }
+           
             catch (JsonException)
             {
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync("Invalid JSON data.");
+            }
+            catch (DbUpdateException sqlex) 
+            {
+                context.Response.StatusCode = 406;
+                await context.Response.WriteAsync(sqlex.Message); 
             }
         }
 
