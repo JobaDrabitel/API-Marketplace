@@ -163,8 +163,8 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
         {
             using var reader = new StreamReader(context.Request.Body);
             var jsonBody = await reader.ReadToEndAsync();
-
-            try
+            jsonBody = jsonBody.Trim('\"');
+			try
             {
                 var searchRequest = JsonSerializer.Deserialize<T>(jsonBody);
                 var properties = typeof(T).GetProperties();
