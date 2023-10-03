@@ -80,7 +80,7 @@ app.MapGet("/api/order/getall", async (MarketplaceDbContext dbContext, HttpConte
     await APIHandler.GetAllEntitiesAsync<Order>(dbContext, context));
 
 app.MapPost("api/order/getbyfields", async (MarketplaceDbContext dbContext, HttpContext context) =>
-    await APIHandler.GetAllEntitiesAsync<Order>(dbContext, context));
+    await APIHandler.SearchEntitiesByJsonAsync<Order>(context, dbContext));
 
 
 // OrderItems
