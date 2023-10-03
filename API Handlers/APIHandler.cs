@@ -120,6 +120,11 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
                     context.Response.StatusCode = 400;
                     await context.Response.WriteAsync("Invalid JSON data.");
                 }
+                catch (DbUpdateException sqlex)
+                {
+                    context.Response.StatusCode = 406;
+                    await context.Response.WriteAsync(sqlex.Message);
+                }
             }
             else
             {
