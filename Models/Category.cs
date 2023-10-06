@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace API_Marketplace_.net_7_v1.Models;
+namespace API_Marketplace_.net_7_v1.Models1;
 
 public partial class Category
 {
@@ -11,5 +11,5 @@ public partial class Category
 
     public string? Description { get; set; }
 
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+    public virtual ICollection<ProductsCategory> ProductsCategories { get; set; } = new List<ProductsCategory>();
 }

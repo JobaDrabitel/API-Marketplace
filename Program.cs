@@ -59,6 +59,8 @@ app.MapPost("/api/product/updatebyid/{Id}", async (MarketplaceDbContext dbContex
 
 app.MapGet("/api/product/getall", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.GetAllEntitiesAsync<Product>(dbContext, context));
+app.MapGet("/api/product/delete/{Id}", async (MarketplaceDbContext dbContext, HttpContext context) =>
+	await APIHandler.HideProduct(context, dbContext));
 
 app.MapPost("/api/product/getbyfields", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.SearchEntitiesByJsonAsync<Product>(context, dbContext));
@@ -160,13 +162,13 @@ app.MapPost("/api/wishlist/getbyfields", async (MarketplaceDbContext dbContext, 
 app.MapPut("/api/role/create", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.CreateEntityAsync<Role>(context, dbContext));
 
-app.MapDelete("/api/role/getbyid/{Id}", async (MarketplaceDbContext dbContext, HttpContext context) =>
+app.MapDelete("/api/role/deletebyid/{Id}", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.DeleteEntityByIDAsync<Role>(context, dbContext));
 
 app.MapPost("/api/role/updatebyid/{Id}", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.UpdateEntityAsync<Role>(context, dbContext));
 
-app.MapGet("/api/role/deletebyid/{Id}", async (MarketplaceDbContext dbContext, HttpContext context) =>
+app.MapGet("/api/role/getbyid/{Id}", async (MarketplaceDbContext dbContext, HttpContext context) =>
     await APIHandler.GetEntityAsync<Role>(context, dbContext));
 
 app.MapGet("/api/role/getall", async (MarketplaceDbContext dbContext, HttpContext context) =>

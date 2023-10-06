@@ -1,4 +1,4 @@
-﻿namespace API_Marketplace_.net_7_v1.Controllers
+﻿namespace API_Marketplace_.net_7_v1.Models1.Requests
 {
     public partial class UserAPIHandler
     {

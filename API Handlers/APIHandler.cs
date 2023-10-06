@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System.Collections;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Reflection.PortableExecutable;
 using System.Text.Json;
 
 namespace API_Marketplace_.net_7_v1.API_Handlers
@@ -22,9 +23,7 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
             {
                 var newEntity = JsonSerializer.Deserialize<T>(jsonBody);
                 await dbContext.Set<T>().AddAsync(newEntity);
-
                 await dbContext.SaveChangesAsync();
-
                 var entityType = typeof(T);
                 var firstProperty = entityType.GetProperties().FirstOrDefault();
                 if (firstProperty != null)
@@ -32,7 +31,7 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
                     var entityId = firstProperty.GetValue(newEntity);
 
                     context.Response.StatusCode = 201;
-                    await context.Response.WriteAsync(entityId.ToString()); ;
+                    await context.Response.WriteAsync(entityId.ToString());
                 }
             }
            
@@ -135,27 +134,33 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
 
         public static async Task DeleteEntityByIDAsync<T>(HttpContext context, MarketplaceDbContext dbContext) where T : class
         {
-            if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int entityId))
+            try
             {
-                var entityToDelete = await dbContext.Set<T>().FindAsync(entityId);
-
-                if (entityToDelete != null)
+                if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int entityId))
                 {
-                    dbContext.Set<T>().Remove(entityToDelete);
-                    await dbContext.SaveChangesAsync();
-                    context.Response.StatusCode = 200;
-                    await context.Response.WriteAsync($"{typeof(T).Name} deleted successfully.");
+                    var entityToDelete = await dbContext.Set<T>().FindAsync(entityId);
+
+                    if (entityToDelete != null)
+                    {
+                        dbContext.Set<T>().Remove(entityToDelete);
+                        await dbContext.SaveChangesAsync();
+                        context.Response.StatusCode = 200;
+                        await context.Response.WriteAsync($"{typeof(T).Name} deleted successfully.");
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = 404;
+                        await context.Response.WriteAsync($"{typeof(T).Name} not found.");
+                    }
                 }
                 else
                 {
-                    context.Response.StatusCode = 404;
-                    await context.Response.WriteAsync($"{typeof(T).Name} not found.");
+                    context.Response.StatusCode = 400;
+                    await context.Response.WriteAsync($"Invalid {typeof(T).Name} ID format.");
                 }
             }
-            else
-            {
-                context.Response.StatusCode = 400;
-                await context.Response.WriteAsync($"Invalid {typeof(T).Name} ID format.");
+            catch (Exception ex) 
+            { 
             }
         }
 
@@ -199,5 +204,32 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
                 await context.Response.WriteAsync("Invalid JSON data.");
             }
         }
-    }
+		public static async Task HideProduct(HttpContext context, MarketplaceDbContext dbContext)
+        {
+            if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int entityId))
+            {
+                try
+                {
+					var entityToDelete = await dbContext.Set<Product>().FindAsync(entityId);
+                    if (entityToDelete != null)
+                        entityToDelete.StockQuantity = 0;
+					await dbContext.SaveChangesAsync();
+                    context.Response.StatusCode = 200;
+                    await context.Response.WriteAsync($"{typeof(Product).Name} updated successfully.");
+                }
+                catch (JsonException)
+                {
+                    context.Response.StatusCode = 400;
+                    await context.Response.WriteAsync("Invalid JSON data.");
+                }
+                catch (DbUpdateException sqlex)
+                {
+                    context.Response.StatusCode = 406;
+                    await context.Response.WriteAsync(sqlex.Message);
+                }
+            }
+		}
+
+
+	}
 }
