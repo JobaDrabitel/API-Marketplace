@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace API_Marketplace_.net_7_v1.Models1;
+namespace API_Marketplace_.net_7_v1.Models;
 
 public partial class Product
 {
@@ -18,14 +18,15 @@ public partial class Product
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
+	public string? ImageUrl { get; set; }
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
-
-    public virtual ICollection<ProductsCategory> ProductsCategories { get; set; } = new List<ProductsCategory>();
+	public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 
-    public virtual ICollection<UserProduct> UserProducts { get; set; } = new List<UserProduct>();
+    public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
 
-    public virtual ICollection<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
+
+    public virtual ICollection<User> UsersNavigation { get; set; } = new List<User>();
 }

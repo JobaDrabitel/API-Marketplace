@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace API_Marketplace_.net_7_v1.Models1;
+namespace API_Marketplace_.net_7_v1.Models;
 
 public partial class User
 {
@@ -14,16 +14,16 @@ public partial class User
     public string? Email { get; set; }
 
     public string? PasswordHash { get; set; }
-
-    public int? UserType { get; set; }
+    public string? Phone {  get; set; }
+    public string? ImageUrl { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 
-    public virtual ICollection<UserProduct> UserProducts { get; set; } = new List<UserProduct>();
+    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
-    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public virtual ICollection<Product> ProductsNavigation { get; set; } = new List<Product>();
 
-    public virtual ICollection<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
+    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 }

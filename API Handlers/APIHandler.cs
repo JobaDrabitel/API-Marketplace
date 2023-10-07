@@ -13,7 +13,7 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
 {
     public class APIHandler
     {
-        public static async Task CreateEntityAsync<T>(HttpContext context, MarketplaceDbContext dbContext) where T : class
+        public static async Task CreateEntityAsync<T>(HttpContext context, MarketplaceContext dbContext) where T : class
         {
             using var reader = new StreamReader(context.Request.Body);
             var jsonBody = await reader.ReadToEndAsync();
@@ -48,7 +48,7 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
         }
 
 
-        public static async Task GetEntityAsync<T>(HttpContext context, MarketplaceDbContext dbContext) where T : class
+        public static async Task GetEntityAsync<T>(HttpContext context, MarketplaceContext dbContext) where T : class
         {
             if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int entityId))
             {
@@ -74,13 +74,13 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
             }
         }
 
-        public static async Task GetAllEntitiesAsync<T>(MarketplaceDbContext dbContext, HttpContext context) where T : class
+        public static async Task GetAllEntitiesAsync<T>(MarketplaceContext dbContext, HttpContext context) where T : class
         {
             var entityJson = JsonSerializer.Serialize(await dbContext.Set<T>().ToListAsync());
             await context.Response.WriteAsync(entityJson);
         }
 
-        public static async Task UpdateEntityAsync<T>(HttpContext context, MarketplaceDbContext dbContext) where T : class
+        public static async Task UpdateEntityAsync<T>(HttpContext context, MarketplaceContext dbContext) where T : class
         {
             if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int entityId))
             {
@@ -132,7 +132,7 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
             }
         }
 
-        public static async Task DeleteEntityByIDAsync<T>(HttpContext context, MarketplaceDbContext dbContext) where T : class
+        public static async Task DeleteEntityByIDAsync<T>(HttpContext context, MarketplaceContext dbContext) where T : class
         {
             try
             {
@@ -164,7 +164,7 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
             }
         }
 
-        public static async Task SearchEntitiesByJsonAsync<T>(HttpContext context, MarketplaceDbContext dbContext) where T : class
+        public static async Task SearchEntitiesByJsonAsync<T>(HttpContext context, MarketplaceContext dbContext) where T : class
         {
             using var reader = new StreamReader(context.Request.Body);
             var jsonBody = await reader.ReadToEndAsync();
@@ -204,7 +204,7 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
                 await context.Response.WriteAsync("Invalid JSON data.");
             }
         }
-		public static async Task HideProduct(HttpContext context, MarketplaceDbContext dbContext)
+		public static async Task HideProduct(HttpContext context, MarketplaceContext dbContext)
         {
             if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int entityId))
             {
@@ -228,8 +228,81 @@ namespace API_Marketplace_.net_7_v1.API_Handlers
                     await context.Response.WriteAsync(sqlex.Message);
                 }
             }
-		}
 
+		}
+		public static async Task GetProductsOfUser(HttpContext context, MarketplaceContext dbContext)
+		{
+			if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int userId))
+			{
+				try
+				{
+					var user = await dbContext.Set<User>().FindAsync(userId);
+                    var productsBelongingToUser = user.ProductsNavigation;
+					await context.Response.WriteAsync(JsonSerializer.Serialize(productsBelongingToUser));
+					context.Response.StatusCode = 200;
+					await context.Response.WriteAsync($"{typeof(Product).Name} created successfully.");
+				}
+				catch (JsonException)
+				{
+					context.Response.StatusCode = 400;
+					await context.Response.WriteAsync("Invalid JSON data.");
+				}
+				catch (DbUpdateException sqlex)
+				{
+					context.Response.StatusCode = 406;
+					await context.Response.WriteAsync(sqlex.Message);
+				}
+			}
+		}
+		public static async Task CreateProductAndLinkToUserAsync(HttpContext context, MarketplaceContext dbContext)
+		{
+			if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int userId))
+			{
+                try
+                {
+                    using var reader = new StreamReader(context.Request.Body);
+                    var jsonBody = await reader.ReadToEndAsync();
+                    jsonBody = jsonBody.Trim('\"');
+                    var product = JsonSerializer.Deserialize<Product>(jsonBody);
+
+                    var user = await dbContext.Users.FindAsync(userId);
+                    if (user != null)
+                    {
+                        user.ProductsNavigation.Add(product); // Добавляем товар в коллекцию товаров пользователя
+                        await dbContext.SaveChangesAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    context.Response.StatusCode = 406;
+                    await context.Response.WriteAsync(ex.Message);
+                }
+			}
+		}
+		public static async Task GetWishlostOfUser(HttpContext context, MarketplaceContext dbContext)
+		{
+			if (context.Request.RouteValues["Id"] is string entityIdStr && int.TryParse(entityIdStr, out int userId))
+			{
+				try
+				{
+					var user = await dbContext.Set<User>().FindAsync(userId);
+					var productsBelongingToUser = user.Products;
+					await context.Response.WriteAsync(JsonSerializer.Serialize(productsBelongingToUser));
+					context.Response.StatusCode = 200;
+					await context.Response.WriteAsync($"{typeof(Product).Name} created successfully.");
+				}
+				catch (JsonException)
+				{
+					context.Response.StatusCode = 400;
+					await context.Response.WriteAsync("Invalid JSON data.");
+				}
+				catch (DbUpdateException sqlex)
+				{
+					context.Response.StatusCode = 406;
+					await context.Response.WriteAsync(sqlex.Message);
+				}
+			}
+		}
 
 	}
 }

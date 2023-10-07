@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace API_Marketplace_.net_7_v1.Models1;
+namespace API_Marketplace_.net_7_v1.Models;
 
 public partial class Role
 {
@@ -9,5 +9,5 @@ public partial class Role
 
     public string? RoleName { get; set; }
 
-    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }
