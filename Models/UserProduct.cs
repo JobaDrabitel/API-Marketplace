@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace API_Marketplace_.net_7_v1.Models1;
+namespace API_Marketplace_.net_7_v1.Models;
 
 public partial class UserProduct
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Marketplace_.net_7_v1.Models1;
+namespace API_Marketplace_.net_7_v1.Models;
 
 public partial class MarketplaceContext : DbContext
 {
