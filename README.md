@@ -14,11 +14,63 @@ There Are 6 types of methods:
 </ul>
 
 Examples
-for localhost:8080/api/user/create  
+```json
+"User"
 {
-  "FirstName": "John1132",
-  "LastName": "Doe1132",
-  "Email": "johndo11133e@example.com",
-  "PasswordHash": "hashedPassword1111333333",
-  "RoleId": 2
-} \n (post)
+  "UserName": "john_doe",
+  "FirstName": "John",
+  "LastName": "Doe",
+  "Email": "john@example.com",
+  "PasswordHash": "secure_password",
+  "Phone":"88006565665"
+  "RoleId": 2,
+  "ImageURL" : "https://i.stack.imgur.com/ILTQq.png"
+}
+
+"Product"
+{
+  "Name": "Laptop Model XYZ",
+  "Description": "Powerful laptop for all your needs",
+  "CategoryId": 3,
+  "Price": 999.99,
+  "ImageURL": "https://example.com/laptop.jpg",
+  "StockQuantity" : 100,
+  "SellerUserID" : 2
+}
+
+"Order"
+{
+  "UserId": 1,
+  "OrderDate": "2023-08-26T10:00:00",
+  "TotalAmount": 499.99
+}
+
+ "OrderItem"
+{
+  "OrderId": 1, 
+  "ProductId": 2, 
+  "Quantity": 2,
+  "UnitPrice": 249.99
+}
+
+ "Review"
+{
+  "ProductId": 3, 
+  "UserId": 4,
+  "Rating": 5,
+  "Comment": "Great product! Highly recommended."
+  "ImageURL" : "https://i.stack.imgur.com/ILTQq.png"
+}
+
+ "Category"
+{
+  "Name": "Laptops",
+  "Description": "Category for various laptop models"
+}
+
+"Wishlist"
+{
+  "UserId": 1, 
+  "ProductId": 2
+}
+```
