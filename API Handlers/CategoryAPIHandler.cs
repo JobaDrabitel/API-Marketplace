@@ -12,7 +12,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
 {
     public class CategoryAPIHandler
     {
-        public static async Task CreateCategoryAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task CreateCategoryAsync(HttpContext context, Marketplace1Context dbContext)
         {
             // Читаем JSON-тело запроса
             using var reader = new StreamReader(context.Request.Body);
@@ -37,7 +37,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task GetCategoryAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task GetCategoryAsync(HttpContext context, Marketplace1Context dbContext)
         {
             if (context.Request.RouteValues["CategoryId"] is string categoryIdStr && int.TryParse(categoryIdStr, out int categoryId))
             {
@@ -67,7 +67,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
 
         public static async Task<string> GetAllCategoriesAsync()
         {
-            using var dbContext = new MarketplaceDbContext();
+            using var dbContext = new Marketplace1Context();
             {
                 var categories = await dbContext.Categories.ToListAsync();
 
@@ -78,7 +78,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task UpdateCategoryAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task UpdateCategoryAsync(HttpContext context, Marketplace1Context dbContext)
         {
             // Получите CategoryId из URL
             if (context.Request.RouteValues["CategoryId"] is string categoryIdStr && int.TryParse(categoryIdStr, out int categoryId))
@@ -122,7 +122,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task DeleteCategoryByIDAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task DeleteCategoryByIDAsync(HttpContext context, Marketplace1Context dbContext)
         {
             if (context.Request.RouteValues["CategoryId"] is string categoryIdStr && int.TryParse(categoryIdStr, out int categoryId))
             {

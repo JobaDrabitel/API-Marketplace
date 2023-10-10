@@ -7,7 +7,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
 {
     public partial class UserAPIHandler
     {
-        public static async Task CreateUserAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task CreateUserAsync(HttpContext context, Marketplace1Context dbContext)
         {
             // Читаем JSON-тело запроса
             using var reader = new StreamReader(context.Request.Body);
@@ -32,7 +32,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
                 await context.Response.WriteAsync("Invalid JSON data.");
             }
         }
-        public static async Task<string> AuthenticateUserAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task<string> AuthenticateUserAsync(HttpContext context, Marketplace1Context dbContext)
         {
             // Читаем JSON-тело запроса
             using var reader = new StreamReader(context.Request.Body);
@@ -70,7 +70,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
         }
 
 
-        public static async Task DeleteUserByIDAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task DeleteUserByIDAsync(HttpContext context, Marketplace1Context dbContext)
         {
             if (context.Request.RouteValues["userId"] is string userIdStr && int.TryParse(userIdStr, out int userId))
             {
@@ -98,7 +98,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task GetUserByIDAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task GetUserByIDAsync(HttpContext context, Marketplace1Context dbContext)
         {
             if (context.Request.RouteValues["userId"] is string userIdStr && int.TryParse(userIdStr, out int userId))
             {
@@ -127,7 +127,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
         }
         public static async Task<string> GetAllUsersAsync()
         {
-            using var dbContext = new MarketplaceDbContext();
+            using var dbContext = new Marketplace1Context();
             {
                 var users = dbContext.Users.ToList();
 
@@ -140,7 +140,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
 
 
 
-        public static async Task UpdateUserAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task UpdateUserAsync(HttpContext context, Marketplace1Context dbContext)
         {
             // Читаем JSON-тело запроса
             using var reader = new StreamReader(context.Request.Body);
@@ -161,7 +161,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
                         userToUpdate.LastName = updatedUser.LastName;
                         userToUpdate.Email = updatedUser.Email;
                         userToUpdate.PasswordHash = updatedUser.PasswordHash;
-                        userToUpdate.RoleId = updatedUser.RoleId;
+                        userToUpdate.Roles = updatedUser.Roles;
 
                         // Сохраните изменения в базе данных
                         await dbContext.SaveChangesAsync();

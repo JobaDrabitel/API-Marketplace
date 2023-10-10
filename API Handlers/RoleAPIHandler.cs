@@ -3,7 +3,7 @@ using System.Text.Json;
 
 public class RoleAPIHandler
 {
-    public static async Task CreateRoleAsync(HttpContext context, MarketplaceDbContext dbContext)
+    public static async Task CreateRoleAsync(HttpContext context, Marketplace1Context dbContext)
     {
         // Читаем JSON-тело запроса
         using var reader = new StreamReader(context.Request.Body);
@@ -28,7 +28,7 @@ public class RoleAPIHandler
         }
     }
 
-    public static async Task GetRoleAsync(HttpContext context, MarketplaceDbContext dbContext)
+    public static async Task GetRoleAsync(HttpContext context, Marketplace1Context dbContext)
     {
         if (context.Request.RouteValues["RoleId"] is string roleIdStr && int.TryParse(roleIdStr, out int roleId))
         {
@@ -56,7 +56,7 @@ public class RoleAPIHandler
         }
     }
 
-    public static async Task UpdateRoleAsync(HttpContext context, MarketplaceDbContext dbContext)
+    public static async Task UpdateRoleAsync(HttpContext context, Marketplace1Context dbContext)
     {
         // Получите RoleId из URL
         if (context.Request.RouteValues["RoleId"] is string roleIdStr && int.TryParse(roleIdStr, out int roleId))
@@ -99,7 +99,7 @@ public class RoleAPIHandler
         }
     }
 
-    public static async Task DeleteRoleByIDAsync(HttpContext context, MarketplaceDbContext dbContext)
+    public static async Task DeleteRoleByIDAsync(HttpContext context, Marketplace1Context dbContext)
     {
         if (context.Request.RouteValues["RoleId"] is string roleIdStr && int.TryParse(roleIdStr, out int roleId))
         {
@@ -129,7 +129,7 @@ public class RoleAPIHandler
 
     public static async Task<string> GetAllRolesAsync()
     {
-        using var dbContext = new MarketplaceDbContext();
+        using var dbContext = new Marketplace1Context();
         {
             var roles = dbContext.Roles.ToList();
 

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace API_Marketplace_.net_7_v1.Migrations
 {
-    [DbContext(typeof(MarketplaceDbContext))]
+    [DbContext(typeof(Marketplace1Context))]
     [Migration("20230911200445_AddImageToProductAndReview")]
     partial class AddImageToProductAndReview
     {

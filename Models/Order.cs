@@ -9,11 +9,15 @@ public partial class Order
 
     public int? UserId { get; set; }
 
-    public DateTime? OrderDate { get; set; } = DateTime.Now;
+    public int? ProductId { get; set; }
+
+    public DateTime? CreateTime { get; set; }
+
+    public int? TotalQuantity { get; set; }
 
     public decimal? TotalAmount { get; set; }
 
-    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public virtual Product? Product { get; set; }
 
     public virtual User? User { get; set; }
 }

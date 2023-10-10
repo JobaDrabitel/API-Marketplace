@@ -5,7 +5,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
 {
     public class ProductAPIHandler
     {
-        public static async Task CreateProductAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task CreateProductAsync(HttpContext context, Marketplace1Context dbContext)
         {
             // Читаем JSON-тело запроса
             using var reader = new StreamReader(context.Request.Body);
@@ -30,7 +30,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task GetProductAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task GetProductAsync(HttpContext context, Marketplace1Context dbContext)
         {
             if (context.Request.RouteValues["productId"] is string productIdStr && int.TryParse(productIdStr, out int productId))
             {
@@ -59,7 +59,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
         }
         public static async Task<string> GetAllProductsAsync()
         {
-            using var dbContext = new MarketplaceDbContext();
+            using var dbContext = new Marketplace1Context();
             {
                 var users = dbContext.Products.ToList();
 
@@ -70,7 +70,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task UpdateProductAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task UpdateProductAsync(HttpContext context, Marketplace1Context dbContext)
         {
             // Получите ProductId из URL
             if (context.Request.RouteValues["productId"] is string productIdStr && int.TryParse(productIdStr, out int productId))
@@ -90,10 +90,10 @@ namespace API_Marketplace_.net_7_v1.Controllers
                         productToUpdate.Description = updatedProduct.Description;
                         productToUpdate.Price = updatedProduct.Price;
                         productToUpdate.StockQuantity = updatedProduct.StockQuantity;
-                        productToUpdate.CategoryId = updatedProduct.CategoryId;
-                        productToUpdate.SellerUserId = updatedProduct.SellerUserId;
+                        productToUpdate.Categories = updatedProduct.Categories;
+                        productToUpdate.Users = updatedProduct.Users;
                         productToUpdate.UpdatedAt = DateTime.Now;
-                        productToUpdate.ImageURL = updatedProduct.ImageURL;
+                        productToUpdate.ImageUrl = updatedProduct.ImageUrl;
                         // Сохраняем изменения в базе данных
                         await dbContext.SaveChangesAsync();
                         context.Response.StatusCode = 200; // OK
@@ -119,7 +119,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task DeleteProductByIDAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task DeleteProductByIDAsync(HttpContext context, Marketplace1Context dbContext)
         {
             if (context.Request.RouteValues["productId"] is string productIdStr && int.TryParse(productIdStr, out int productId))
             {

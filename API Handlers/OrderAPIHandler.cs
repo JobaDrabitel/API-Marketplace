@@ -5,7 +5,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
 {
     public class OrderAPIHandler
     {
-        public static async Task CreateOrderAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task CreateOrderAsync(HttpContext context, Marketplace1Context dbContext)
         {
             // Читаем JSON-тело запроса
             using var reader = new StreamReader(context.Request.Body);
@@ -15,7 +15,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             {
                 // Десериализуем JSON в объект Order
                 var newOrder = JsonSerializer.Deserialize<Order>(jsonBody);
-                newOrder.OrderDate = DateTime.Now;
+                newOrder.CreateTime = DateTime.Now;
                 // Добавляем продукт в DbSet<Order> и сохраняем изменения в базе данных
                 dbContext.Orders.Add(newOrder);
                 await dbContext.SaveChangesAsync();
@@ -30,7 +30,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task GetOrderAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task GetOrderAsync(HttpContext context, Marketplace1Context dbContext)
         {
             if (context.Request.RouteValues["OrderId"] is string OrderIdStr && int.TryParse(OrderIdStr, out int OrderId))
             {
@@ -59,7 +59,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
         }
         public static async Task<string> GetAllOrdersAsync()
         {
-            using var dbContext = new MarketplaceDbContext();
+            using var dbContext = new Marketplace1Context();
             {
                 var users = dbContext.Orders.ToList();
 
@@ -70,7 +70,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task UpdateOrderAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task UpdateOrderAsync(HttpContext context, Marketplace1Context dbContext)
         {
             // Получите OrderId из URL
             if (context.Request.RouteValues["OrderId"] is string OrderIdStr && int.TryParse(OrderIdStr, out int OrderId))
@@ -87,10 +87,9 @@ namespace API_Marketplace_.net_7_v1.Controllers
                     {
                         var updatedOrder = JsonSerializer.Deserialize<Order>(jsonBody);
                         OrderToUpdate.UserId = updatedOrder.UserId;
-                        OrderToUpdate.OrderItems = updatedOrder.OrderItems;
                         OrderToUpdate.User = updatedOrder.User;
                         OrderToUpdate.TotalAmount = updatedOrder.TotalAmount;
-                        OrderToUpdate.OrderDate = DateTime.Now;
+                        OrderToUpdate.CreateTime = DateTime.Now;
                         // Сохраняем изменения в базе данных
                         await dbContext.SaveChangesAsync();
                         context.Response.StatusCode = 200; // OK
@@ -116,7 +115,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task DeleteOrderByIDAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task DeleteOrderByIDAsync(HttpContext context, Marketplace1Context dbContext)
         {
             if (context.Request.RouteValues["OrderId"] is string OrderIdStr && int.TryParse(OrderIdStr, out int OrderId))
             {

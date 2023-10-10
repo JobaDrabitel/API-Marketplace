@@ -17,7 +17,7 @@ public partial class Review
 
     public DateTime? CreatedAt { get; set; }
 
-    public string? ImageURL { get; set; }
+    public string? ImageUrl { get; set; }
 
     public virtual Product? Product { get; set; }
 

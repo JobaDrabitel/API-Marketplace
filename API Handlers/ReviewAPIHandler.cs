@@ -11,7 +11,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
 {
     public class ReviewAPIHandler
     {
-        public static async Task CreateReviewAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task CreateReviewAsync(HttpContext context, Marketplace1Context dbContext)
         {
             // Читаем JSON-тело запроса
             using var reader = new StreamReader(context.Request.Body);
@@ -36,7 +36,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task GetReviewAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task GetReviewAsync(HttpContext context, Marketplace1Context dbContext)
         {
             if (context.Request.RouteValues["reviewId"] is string reviewIdStr && int.TryParse(reviewIdStr, out int reviewId))
             {
@@ -66,7 +66,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
 
         public static async Task<string> GetAllReviewsAsync()
         {
-            using var dbContext = new MarketplaceDbContext();
+            using var dbContext = new Marketplace1Context();
             {
                 var reviews = dbContext.Reviews.ToList();
 
@@ -77,7 +77,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task UpdateReviewAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task UpdateReviewAsync(HttpContext context, Marketplace1Context dbContext)
         {
             // Получите ReviewId из URL
             if (context.Request.RouteValues["reviewId"] is string reviewIdStr && int.TryParse(reviewIdStr, out int reviewId))
@@ -98,7 +98,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
                         reviewToUpdate.Rating = updatedReview.Rating;
                         reviewToUpdate.Comment = updatedReview.Comment;
                         reviewToUpdate.CreatedAt = DateTime.Now;
-                        reviewToUpdate.ImageURL = updatedReview.ImageURL;
+                        reviewToUpdate.ImageUrl = updatedReview.ImageUrl;
                         // Сохраняем изменения в базе данных
                         await dbContext.SaveChangesAsync();
                         context.Response.StatusCode = 200; // OK
@@ -124,7 +124,7 @@ namespace API_Marketplace_.net_7_v1.Controllers
             }
         }
 
-        public static async Task DeleteReviewByIdAsync(HttpContext context, MarketplaceDbContext dbContext)
+        public static async Task DeleteReviewByIdAsync(HttpContext context, Marketplace1Context dbContext)
         {
             if (context.Request.RouteValues["reviewId"] is string reviewIdStr && int.TryParse(reviewIdStr, out int reviewId))
             {
